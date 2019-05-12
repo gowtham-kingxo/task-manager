@@ -17,7 +17,6 @@ const User = mongoose.model('User', {
                 throw new Error('Email is invalid ')
             }
         }
-
     },
     password: {
         type: String,
