@@ -44,6 +44,15 @@ app.get('/users/:id', async (req, res) => {
 //RESTful service for updating a user
 app.patch('/users/:id', async (req, res) => {
 
+    //Checks validity of the update
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['name', 'email', 'password', 'age']
+    const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+
+    if(!isValidOperation) {
+        return res.status(400).send({error: 'Invalid update operations.'})
+    }
+
     const _id = req.params.id
 
     try {
