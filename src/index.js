@@ -87,7 +87,7 @@ app.delete('/users/:id', async (req, res) => {
         const user = await User.findByIdAndDelete(req.params.id)
 
         if(!user) {
-            res.status(404).send()
+            return res.status(404).send()
         }
 
         res.send(user)
@@ -168,6 +168,21 @@ app.post('/tasks', async (req, res) => {
     }
 
    
+})
+
+//RESTful service to delete task by id
+app.delete('/tasks/:id', async(req, res) => {
+    try {
+        const task = await Task.findByIdAndDelete(req.params.id)
+
+        if(!task) {
+            return res.status(404).send()
+        }
+
+        res.send(task)
+    } catch(error) {
+        res.status(500).send()
+    }
 })
 
 
