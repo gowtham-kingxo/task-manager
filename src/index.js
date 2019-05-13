@@ -19,14 +19,10 @@ app.get('/users', async (req, res) => {
         res.status(500).send(error)
     }
    
-    // User.find()
-    //     .then(users => {
-    //         res.status(201).send(users)
-    //     })
-    //     .catch(error => {
-    //         res.status(500).send(error)
-    //     })
+   
 })
+
+
 
 //RESTful service for fetching user by id
 app.get('/users/:id', async (req, res) => {
@@ -43,6 +39,24 @@ app.get('/users/:id', async (req, res) => {
         res.status(500).send()
     }
    
+})
+
+//RESTful service for updating a user
+app.patch('/users/:id', async (req, res) => {
+
+    const _id = req.params.id
+
+    try {
+        const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true})
+
+        if(!user) {
+            return res.status(404).send()
+        }
+
+        res.send(user)
+    } catch(error) {
+        res.status(400).send(error)
+    }
 })
 
 //RESTful service for create new user
@@ -69,13 +83,7 @@ app.get('/tasks', async (req, res) => {
         res.status(500).send(error)
     }
     
-    // Task.find()
-    //     .then(tasks => {
-    //         res.status(201).send(tasks)
-    //     })
-    //     .catch(error => {
-    //         res.status(500).send(error)
-    //     })
+  
 })
 
 //RESTful service for fetching user by id
@@ -93,17 +101,7 @@ app.get('/tasks/:id', async (req, res) => {
     } catch (error) {
         res.status(500).send()
     }
-    // Task.findById(_id)
-    //     .then(task => {
-    //         if(!task) {
-    //            return res.status(404).send()
-    //         }
-
-    //         res.send(task)
-    //     })
-    //     .catch(error => {
-    //         res.status(500).send()
-    //     })
+    
 })
  
 //RESTful service for create new task
@@ -117,13 +115,7 @@ app.post('/tasks', async (req, res) => {
         res.status(400).send(error)
     }
 
-    // newTask.save()
-    //     .then(() => {
-    //         res.status(201).send(newTask)
-    //     })
-    //     .catch(error => {
-    //         res.status(400).send(error)
-    //     })
+   
 })
 
 
