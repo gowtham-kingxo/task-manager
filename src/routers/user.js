@@ -15,8 +15,6 @@ router.get('/users', async (req, res) => {
    
 })
 
-
-
 //RESTful service for fetching user by id
 router.get('/users/:id', async (req, res) => {
 
@@ -70,7 +68,8 @@ router.post('/users', async (req, res) => {
 
     try {
         await newUser.save()
-        res.status(201).send(newUser)
+        const token = await newUser.generateAuthToken()
+        res.status(201).send({newUser, token})
     } catch(error) {
         res.status(400).send(error)
     }
