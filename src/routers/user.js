@@ -72,7 +72,7 @@ router.post('/users', async (req, res) => {
         await newUser.save()
         res.status(201).send(newUser)
     } catch(error) {
-        res.status(400).send()
+        res.status(400).send(error)
     }
    
 })
