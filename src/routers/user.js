@@ -1,18 +1,11 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 
 //RESTful service for fetching all the users
-router.get('/users', async (req, res) => {
-
-    try {
-        const users = await User.find()
-        res.status(201).send(users)
-    } catch (error) {
-        res.status(500).send(error)
-    }
-   
-   
+router.get('/users/me', auth, async (req, res) => {
+   res.send(req.user)
 })
 
 //RESTful service for fetching user by id
@@ -63,7 +56,7 @@ router.patch('/users/:id', async (req, res) => {
 })
 
 //RESTful service for create new user
-router.post('/users', async (req, res) => {
+router.post('/users', auth, async (req, res) => {
     const newUser = new User(req.body)
 
     try {
