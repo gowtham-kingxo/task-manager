@@ -41,6 +41,21 @@ const userSchema = new mongoose.Schema({
     }
 } )  
 
+//Method to get user by credentials
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email })
+    if(!user) {
+        throw new Error('Incorrect email.')
+    }
+
+    const isMatch = bcrypt.compare(password, user.password)
+    if(!isMatch) {
+        throw new Error('Incorrect password.')
+    }
+
+    return user
+}
+
 //executed before save. Since we need this binding, standard function is used instead of arrow func.
 userSchema.pre('save', async function (next) {
 
@@ -54,6 +69,5 @@ userSchema.pre('save', async function (next) {
 })
 
 const User = mongoose.model('User', userSchema)
-
 
 module.exports = User
