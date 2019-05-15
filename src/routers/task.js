@@ -4,10 +4,10 @@ const auth = require('../middleware/auth')
 const router = new express.Router()
 
 //RESTful service for fetching all the tasks
-router.get('/tasks', async (req, res) => {
+router.get('/tasks', auth, async (req, res) => {
 
     try {
-        const tasks = await Task.find()
+        const tasks = await Task.find({owner: req.user._id})
         res.status(201).send(tasks)
     } catch (error) {
         res.status(500).send(error)
