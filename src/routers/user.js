@@ -26,7 +26,7 @@ router.get('/users/:id', async (req, res) => {
 })
 
 //RESTful service for updating a user
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
 
     //Checks validity of the update
     const updates = Object.keys(req.body)
@@ -37,20 +37,14 @@ router.patch('/users/:id', async (req, res) => {
         return res.status(400).send({error: 'Invalid update operations.'})
     }
 
-    const _id = req.params.id
-
     try {
-        const user = await User.findById(req.params.id)
-        if(!user) {
-            return res.status(404).send()
-        }
-
-        updates.forEach(updateOperation => user[updateOperation] = req.body[updateOperation])
-        await user.save()
+        updates.forEach(updateOperation => req.user[updateOperation] = req.body[updateOperation])
+        await req.user.save()
 
         // const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true})
-        res.send(user)
+        res.send(req.user)
     } catch(error) {
+        console.log(error)
         res.status(400).send(error)
     }
 })
