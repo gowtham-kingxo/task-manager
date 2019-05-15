@@ -56,7 +56,7 @@ router.patch('/users/:id', async (req, res) => {
 })
 
 //RESTful service for create new user
-router.post('/users', auth, async (req, res) => {
+router.post('/users', async (req, res) => {
     const newUser = new User(req.body)
 
     try {
@@ -78,6 +78,19 @@ router.post('/users/login', async (req, res) => {
     } catch (error) {
         console.log('in catch', error)
         res.status(400).send(error.toString())
+    }
+})
+
+//RESTful service for logout
+router.post('/users/logout', auth, async (req, res) => {
+    try {
+        console.log('user', req.user)
+        req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
+        await req.user.save()
+        res.send()
+    } catch(error) {
+        console.log(error)
+        res.status(500).send()
     }
 })
 
