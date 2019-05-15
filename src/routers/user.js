@@ -84,12 +84,26 @@ router.post('/users/login', async (req, res) => {
 //RESTful service for logout
 router.post('/users/logout', auth, async (req, res) => {
     try {
-        console.log('user', req.user)
         req.user.tokens = req.user.tokens.filter(token => token.token !== req.token)
+       
         await req.user.save()
         res.send()
     } catch(error) {
-        console.log(error)
+        console.log('error', error)
+        res.status(500).send()
+    }
+})
+
+//RESTful service for logout from all the sessions
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try{
+        console.log('before user: ', req.user)
+        req.user.tokens = []
+        console.log('after user: ', req.user)
+        await req.user.save()
+        res.send()
+    } catch(error) {
+        console.log('error', error)
         res.status(500).send()
     }
 })
