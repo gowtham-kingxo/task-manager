@@ -1,7 +1,9 @@
 const express = require('express')
+const router = new express.Router()
+const multer = require('multer')
+
 const User = require('../models/user')
 const auth = require('../middleware/auth')
-const router = new express.Router()
 
 //RESTful service for fetching all the users
 router.get('/users/me', auth, async (req, res) => {
@@ -110,6 +112,24 @@ router.delete('/users/me', auth, async (req, res) => {
     } catch (error) {
         res.status(500).send()
     }
+})
+
+//RESTful service for file upload.
+const upload = multer({
+    dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return callback(new Error('Please upload an image.'))
+        }
+
+        callback(undefined, true)
+    }
+})
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+    res.send()
 })
 
 module.exports = router
