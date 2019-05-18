@@ -5,27 +5,28 @@ const multer = require('multer')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 
+
 //RESTful service for fetching all the users
 router.get('/users/me', auth, async (req, res) => {
    res.send(req.user)
 })
 
 //RESTful service for fetching user by id
-router.get('/users/:id', async (req, res) => {
+// router.get('/users/:id', async (req, res) => {
 
-    const _id = req.params.id
+//     const _id = req.params.id
 
-    try {
-        const user = await User.findById(_id)
-        if(!user) {
-            return res.status(404).send()
-         }
-         res.send(user)
-    } catch (error) {
-        res.status(500).send()
-    }
+//     try {
+//         const user = await User.findById(_id)
+//         if(!user) {
+//             return res.status(404).send()
+//          }
+//          res.send(user)
+//     } catch (error) {
+//         res.status(500).send()
+//     }
    
-})
+// })
 
 //RESTful service for updating a user
 router.patch('/users/me', auth, async (req, res) => {
@@ -143,5 +144,27 @@ router.delete('/users/me/avatar', auth, async (req, res) => {
 }, (error, req, res, next) => {
     res.status(400).send({ error: error.message})
 })
+
+//RESTful service to fetch user profile pic by id
+router.get('/users/:id/avatar', async (req, res) => {
+    
+    try{
+        const user = await User.findById(req.params.id)
+
+        if(!user || !user.avatar) {
+            throw new Error()
+        }
+
+        res.set('Content-Type', 'image/jpg')
+        res.send(user.avatar)
+
+    } catch (error) {
+        console.log(error)
+        res.status(404).send()
+    }
+})
+
+
+
 
 module.exports = router
