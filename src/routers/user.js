@@ -6,6 +6,7 @@ const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail } = require('../emails/account')
+const { sendCancelationEmail } = require('../emails/account')
 
 
 //RESTful service for fetching all the users
@@ -111,12 +112,16 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 })
 
-//RESTful service to delete user by id
+//RESTful service to delete user account.
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove()
+        sendCancelationEmail(req.user.email, req.user.name)
+            .then(() => console.log('Successfully sent!'))
+            .catch(error => console.log('Cancelation email', error))
         res.send(req.user)
     } catch (error) {
+        console.log('remove account error', error)
         res.status(500).send()
     }
 })

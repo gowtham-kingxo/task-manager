@@ -1,7 +1,5 @@
 const sgMail = require('@sendgrid/mail')
-const sendgridAPIKey = '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'
-
-sgMail.setApiKey(sendgridAPIKey)
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const sendWelcomeEmail = (email, name) => {
     sgMail.send({
@@ -12,6 +10,23 @@ const sendWelcomeEmail = (email, name) => {
     }) 
 }
 
+const sendCancelationEmail = (email, name) => {
+    console.log('to email', email)
+    return sgMail.send({
+        to: email,
+        from: 'gowtham.gourov@gmail.com',
+        subject: 'Your account removed successfully',
+        text: `Hey ${name}, please let us know why you have deleted your account and we assure to rectify and provide 
+               you with the best possible experience.
+               
+               Thank you!
+               
+               Best Wishes,
+               Team TaskApp`
+    }) 
+}
+
 module.exports = {
-    sendWelcomeEmail
+    sendWelcomeEmail,
+    sendCancelationEmail
 }
