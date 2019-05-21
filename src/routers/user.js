@@ -1,15 +1,19 @@
 const express = require('express')
 const router = new express.Router()
 const multer = require('multer')
+const sharp = require('sharp')
 
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const { sendWelcomeEmail } = require('../emails/account')
 
 
 //RESTful service for fetching all the users
 router.get('/users/me', auth, async (req, res) => {
    res.send(req.user)
 })
+
+//https://app.sendgrid.com/guide/integrate/langs/nodejs
 
 //RESTful service for fetching user by id
 // router.get('/users/:id', async (req, res) => {
@@ -58,9 +62,11 @@ router.post('/users', async (req, res) => {
 
     try {
         await newUser.save()
+        sendWelcomeEmail(newUser.email, newUser.name)
         const token = await newUser.generateAuthToken()
         res.status(201).send({newUser, token})
     } catch(error) {
+        console.log('Create new user', error)
         res.status(400).send(error)
     }
    
@@ -129,7 +135,9 @@ const upload = multer({
     }
 })
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    req.user.avatar = req.file.buffer
+    //Resizing image and converting it to png
+    const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+    req.user.avatar = buffer
     await req.user.save()
     res.send()
 }, (error, req, res, next) => {
